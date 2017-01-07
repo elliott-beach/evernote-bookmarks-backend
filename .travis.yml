@@ -4,4 +4,4 @@ python:
 install: "pip install -r requirements.txt"
 # no tests yet.
 # adding a comment to trigger travis
-script: true
+script: pytest
