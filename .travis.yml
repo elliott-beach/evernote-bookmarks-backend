@@ -6,4 +6,5 @@ script: python app.py & pytest
 env:
   global:
    - origin: "http://test"
-   - dev_token: "test"
+   - dev_token:
+         secure: "zA8qaOL4GMmyhDJ43bYS0hvXkCQzfWYR3XxXQkn+N7E3yWU2RX7KjJ99vucuvJR5AJWTjMa/9VBbNYfK2kLDUyo83CKtfmiKrGfvPWaTsstFOJ8OalbQ3bm+Is3Yw2LIy8Ez0ZsH2DEON4GSvVPzCH0mnHfDMq44ABTaH7A4UAds/JzzqTqQfa8t3Jl85UVncHEijjNL+Ta1AUrmcIenl1BQYcAmz4DGAYkfDDuq1FLyBhd8sxkYhGCIDeMadFVl4F2VxpcY2fcHwW/9EDa2Th8cjwO26CvdqHqfvsOAxUvgkcOVHD3hefRaw0wIHZnCgBY5uUm9BnEBAxehBIWDoCACSgh4IJoWM4oxBDN8h+L5/BQ1R8omW7pmHwbrly4SJ9GYsN3Wey3c2aXzz0DiCLQVvQ6r6ufBZFOqML89ie0fZtFC/9S7HUH3xkBa7PRKvsWq3gXKddQYgwE+7wuVgT9GSwLS4Kqx4eCHDr81KQmfjDUQ1lNBzbSaiuPg/2kM3lsaLJWNgMT96ij7BCILCFU72CXiczblo17Gw0oDTPZPAQeaV3hDVHIDp4Qmd9voA5Y0nFPlDwbJBvSTrpciDlcIvU9c0WmNOKb6QVOMFyChsVQgUiwiQjk1CkFyRCOWSuGBWNJrcmc3W52qSdo1i3DWLYPVx5oMSXrsux4kyJA="
