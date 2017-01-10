@@ -4,12 +4,21 @@ from evernote.edam.error.ttypes import EDAMUserException
 
 import config
 
+def get_evernote_client(token=None):
+    if token:
+        return EvernoteClient(token=token, sandbox=True)
+    else:
+        return EvernoteClient(
+            consumer_key=config.consumer_key,
+            consumer_secret=config.consumer_secret,
+            sandbox=True
+        )
 
-client = EvernoteClient(token=config.dev_token)
-userStore = client.get_user_store()
-noteStore = client.get_note_store()
 
-def createNote(title, content):
+def createNote(title, content, token):
+    client = get_evernote_client(token=token)
+    userStore = client.get_user_store()
+    noteStore = client.get_note_store()
     note = Types.Note()
     note.title = title
     note.content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">'
