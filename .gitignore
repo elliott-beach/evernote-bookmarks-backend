@@ -1,4 +1,5 @@
 python
+.idea
 *.pyc
 staticfiles
 .env
