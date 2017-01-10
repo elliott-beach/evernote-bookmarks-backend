@@ -53,7 +53,7 @@ def callback():
 def create():
     token = session.get('access_token')
     if not token:
-        return redirect('/')
+        return 'Access Denied', 400
     title = request.form.get('title').encode('utf-8')
     content = request.form.get('content').encode('utf-8')
     note = evernote.createNote(title, content, token)
