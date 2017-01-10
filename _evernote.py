@@ -4,7 +4,7 @@ from evernote.edam.error.ttypes import EDAMUserException
 
 import config
 
-def get_evernote_client(token=None):
+def get_client(token=None):
     if token:
         return EvernoteClient(token=token, sandbox=True)
     else:
@@ -15,8 +15,8 @@ def get_evernote_client(token=None):
         )
 
 
-def createNote(title, content, token):
-    client = get_evernote_client(token=token)
+def create_note(title, content, token):
+    client = get_client(token=token)
     userStore = client.get_user_store()
     noteStore = client.get_note_store()
     note = Types.Note()
@@ -34,5 +34,5 @@ if __name__ == "__main__":
     title = "test"
     #content = '<a href="https://console.aws.amazon.com/s3/home?region=us-west-2#&bucket=big-bucket-of-fun&prefix=">'
     content='<a href="https://url.with.ampersand/foo?boof&amp;bar">FooBar</a>'
-    createNote(title, content)
+    create_note(title, content)
 

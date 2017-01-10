@@ -20,7 +20,7 @@ def index():
 @app.route('/auth')
 def auth():
     callbackUrl = config.host + '/auth_callback'
-    client = evernote.get_evernote_client()
+    client = evernote.get_client()
     request_token = client.get_request_token(callbackUrl)
     # Save the request token information for later
     session['oauth_token'] = request_token['oauth_token']
@@ -31,7 +31,7 @@ def auth():
 @app.route('/auth_callback')
 def callback():
     try:
-        client = evernote.get_evernote_client()
+        client = evernote.get_client()
         access_token = client.get_access_token(
             session['oauth_token'],
             session['oauth_token_secret'],
@@ -42,9 +42,6 @@ def callback():
         return redirect('/')
     session['access_token'] = access_token
     return redirect('/')
-    # note_store = client.get_note_store()
-    # notebooks = note_store.listNotebooks()
-    # return 'Notebooks: %s' % str(notebooks)
 
 ### <\Authentication> ###
 
@@ -56,10 +53,9 @@ def create():
         return 'Access Denied', 400
     title = request.form.get('title').encode('utf-8')
     content = request.form.get('content').encode('utf-8')
-    note = evernote.createNote(title, content, token)
+    note = evernote.create_note(title, content, token)
     return str(note)
 
 if __name__ == "__main__":
-	# Bind to PORT if defined, otherwise default to 5000.
 	port = int(os.environ.get('PORT', 5000))
 	app.run(port=port)
