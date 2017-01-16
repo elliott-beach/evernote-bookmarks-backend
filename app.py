@@ -10,6 +10,12 @@ app = Flask(__name__)
 # encrypt our sessions with the secret
 app.secret_key = config.secret_key
 
+def get_hostname(request):
+    host = request.headers['Host']
+    protocol = request.url.split('/')[0] + '//'
+    return protocol + host
+
+
 @app.route('/')
 def index():
     res = "Evernote Note Creator!"
@@ -19,7 +25,7 @@ def index():
 
 @app.route('/auth')
 def auth():
-    callbackUrl = config.host + '/auth_callback'
+    callbackUrl = get_hostname(request) + '/auth_callback'
     client = evernote.get_client()
     request_token = client.get_request_token(callbackUrl)
     # Save the request token information for later
