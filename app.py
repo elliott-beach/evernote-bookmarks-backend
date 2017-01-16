@@ -20,6 +20,11 @@ def index():
     res = "Evernote Note Creator!"
     return res
 
+@app.route('/bookmarks')
+def bookmarks():
+    res = "Now we can load the bookmarks!"
+    return res
+
 ### <Authentication> ###
 
 @app.route('/auth')
@@ -46,7 +51,7 @@ def callback():
     except KeyError:
         return redirect('/')
     session['access_token'] = access_token
-    return redirect('/')
+    return redirect('/bookmarks')
 
 ### <\Authentication> ###
 
