@@ -6,12 +6,12 @@ import config
 
 def get_client(token=None):
     if token:
-        return EvernoteClient(token=token, sandbox=True)
+        return EvernoteClient(token=token, sandbox=config.sandbox)
     else:
         return EvernoteClient(
             consumer_key=config.consumer_key,
             consumer_secret=config.consumer_secret,
-            sandbox=True
+            sandbox=config.sandbox
         )
 
 
