@@ -15,7 +15,6 @@ def get_hostname(request):
     protocol = request.url.split('/')[0] + '//'
     return protocol + host
 
-
 @app.route('/')
 def index():
     res = "Evernote Note Creator!"
@@ -56,7 +55,7 @@ def callback():
 def create():
     token = session.get('access_token')
     if not token:
-        return 'Access Denied', 400
+        return 'Access Denied', 403
     title = request.form.get('title').encode('utf-8')
     content = request.form.get('content').encode('utf-8')
     note = evernote.create_note(title, content, token)
