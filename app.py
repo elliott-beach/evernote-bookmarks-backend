@@ -22,7 +22,7 @@ def index():
 
 @app.route('/bookmarks')
 def bookmarks():
-    res = "Now we can load the bookmarks!"
+    res = "Loading your bookmarks!"
     return res
 
 ### <Authentication> ###
