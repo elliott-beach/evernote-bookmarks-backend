@@ -23,11 +23,12 @@ def create_notebook(name, token):
     uid = createdNotebook.guid
     return uid
 
-def create_note_with_title(title, content, uid, token):
+def create_note_with_notebook(title, content, uid, token):
     client = get_client(token=token)
     noteStore = client.get_note_store()
     note = Types.Note()
     note.title = title
+    note.notebookGuid = uid
     note.content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">'
     note.content += '<en-note>'+ content + '</en-note>'
     try:
