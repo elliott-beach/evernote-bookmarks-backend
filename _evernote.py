@@ -14,25 +14,40 @@ def get_client(token=None):
             sandbox=config.sandbox
         )
 
+def create_notebook(name, token):
+    noteStore = get_client(token=token).get_note_store()
+    notebook = Types.Notebook()
+    notebook.name = name
+    # @Todo Handle Error "Notebook already taken"
+    createdNotebook = noteStore.createNotebook(notebook)
+    uid = createdNotebook.guid
+    return uid
+
+def create_note_with_notebook(title, content, uid, token):
+    client = get_client(token=token)
+    noteStore = client.get_note_store()
+    note = Types.Note()
+    note.title = title
+    note.notebookGuid = uid
+    note.content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">'
+    note.content += '<en-note>'+ content + '</en-note>'
+    try:
+        return noteStore.createNote(note)
+    # This error may happen if the url is malformed or has not been xml-sanitized.
+    except EDAMUserException as e:
+        raise
+
 
 def create_note(title, content, token):
     client = get_client(token=token)
-    userStore = client.get_user_store()
     noteStore = client.get_note_store()
     note = Types.Note()
     note.title = title
     note.content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">'
     note.content += '<en-note>'+ content + '</en-note>'
-    print content
     try:
         return noteStore.createNote(note)
+    # This error may happen if the url is malformed or has not been xml-sanitized.
     except EDAMUserException as e:
         raise
-
-# test
-if __name__ == "__main__":
-    title = "test"
-    #content = '<a href="https://console.aws.amazon.com/s3/home?region=us-west-2#&bucket=big-bucket-of-fun&prefix=">'
-    content='<a href="https://url.with.ampersand/foo?boof&amp;bar">FooBar</a>'
-    create_note(title, content)
 
