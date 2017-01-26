@@ -66,7 +66,7 @@ def create():
     # TODO change to arrays
     title = request.form.get('title').encode('utf-8')
     content = request.form.get('content').encode('utf-8')
-    note = evernote.create_note(title, content, notebook_uid, token)
+    note = evernote.create_note_with_notebook(title, content, notebook_uid, token)
     return str(note)
 
 if __name__ == "__main__":
