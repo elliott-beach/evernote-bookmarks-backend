@@ -6,4 +6,10 @@ consumer_secret = environment['consumer_secret']
 secret_key = environment['secret_key']
 
 ALLOWED_ORIGIN = environment['origin']
-sandbox = False
+
+if environment['sandbox'] == "True":
+    sandbox = True
+elif environ['sandbox'] == "False":
+    sandbox = False
+else:
+   raise EnvironmentError
