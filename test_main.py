@@ -46,6 +46,13 @@ def test_get_notebook():
     notebook = evernote.get_notebook("bookmarks", config.dev_token)
     assert notebook.name == "bookmarks"
 
+def test_notebook_case():
+    try:
+        evernote.create_notebook("bookmarks", config.dev_token)
+    except evernote.EDAMUserException: # notebook already existed
+        pass
+    assert evernote.get_notebook("bookmarks", config.dev_token).guid == evernote.get_notebook("Bookmarks", config.dev_token).guid
+
 def test_get_notebook_err():
     try:
         evernote.get_notebook("this_does_not_exist", config.dev_token)

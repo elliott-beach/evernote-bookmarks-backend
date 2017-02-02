@@ -25,12 +25,12 @@ def create_notebook(name, token):
     noteStore = get_client(token=token).get_note_store()
     notebook = Types.Notebook()
     notebook.name = name
-    # @Todo Handle Error "Notebook already taken"
     createdNotebook = noteStore.createNotebook(notebook)
     uid = createdNotebook.guid
     return uid
 
 def get_notebook(name, token):
+    name = name.lower() # EverNotebook names are not case sensitive.
     noteStore = get_client(token=token).get_note_store()
     notebooks = noteStore.listNotebooks()
     for nb in notebooks:
