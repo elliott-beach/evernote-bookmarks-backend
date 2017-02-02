@@ -49,7 +49,7 @@ def test_get_notebook():
 def test_get_notebook_err():
     try:
         evernote.get_notebook("this_does_not_exist", config.dev_token)
-    except evernote.NoteNotFoundError:
+    except evernote.NoteBookNotFoundError:
         pass
     else:
         assert False

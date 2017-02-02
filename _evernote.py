@@ -8,7 +8,7 @@ import config
 class EvernoteError(Exception):
     pass
 
-class NoteNotFoundError(EvernoteError):
+class NoteBookNotFoundError(EvernoteError):
     pass
 
 def get_client(token=None):
@@ -36,7 +36,7 @@ def get_notebook(name, token):
     for nb in notebooks:
         if nb.name == name:
             return nb
-    raise NoteNotFoundError
+    raise NoteBookNotFoundError
 
 
 def create_note_with_notebook(title, content, uid, token):
