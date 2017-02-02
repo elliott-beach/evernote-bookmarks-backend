@@ -61,8 +61,15 @@ def create():
     token = session.get('access_token')
     if not token:
         return 'Access Denied', 403
-    # FIXME what is notebook already exists?
-    notebook_uid = session.get('notebook_uid', evernote.create_notebook('Bookmarks', token))
+
+    try:
+        notebook_uid = session['notebook_uid']
+    except KeyError:
+        try:
+            notebook_uid = evernote.get_notebook('Bookmarks', token).guid
+        except evernote.NoteBookNotFoundError:
+            notebook_uid = evernote.create_notebook('Bookmarks', token)
+
     # TODO change to arrays
     title = request.form.get('title').encode('utf-8')
     content = request.form.get('content').encode('utf-8')
@@ -70,5 +77,6 @@ def create():
     return str(note)
 
 if __name__ == "__main__":
+    # @TODO move port to config
 	port = int(os.environ.get('PORT', 5000))
 	app.run(port=port)
