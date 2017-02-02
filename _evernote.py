@@ -4,6 +4,13 @@ from evernote.edam.error.ttypes import EDAMUserException
 
 import config
 
+# TODO move exceptions to separate file
+class EvernoteError(Exception):
+    pass
+
+class NoteNotFoundError(EvernoteError):
+    pass
+
 def get_client(token=None):
     if token:
         return EvernoteClient(token=token, sandbox=config.sandbox)
@@ -22,6 +29,15 @@ def create_notebook(name, token):
     createdNotebook = noteStore.createNotebook(notebook)
     uid = createdNotebook.guid
     return uid
+
+def get_notebook(name, token):
+    noteStore = get_client(token=token).get_note_store()
+    notebooks = noteStore.listNotebooks()
+    for nb in notebooks:
+        if nb.name == name:
+            return nb
+    raise NoteNotFoundError
+
 
 def create_note_with_notebook(title, content, uid, token):
     client = get_client(token=token)

@@ -18,15 +18,41 @@ def randomword(length):
    return ''.join(random.choice(string.lowercase) for i in range(length))
 
 def test_home():
-	response = requests.get(HOST)
-        assert response.status_code == 200
+    response = requests.get(HOST)
+    assert response.status_code == 200
 
 def test_create_access():
-	response = requests.post(HOST+'/create', data={
+    response = requests.post(HOST+'/create', data={
 		'title': 'title',
 		'content': 'some example content'
 	})
-	assert response.status_code == 403
+    assert response.status_code == 403
+
+# @TODO
+def test_create_authorized():
+    """ Test functionality of create method when we are logged in"""
+    session = requests.session()
+    response = requests.post(HOST+'/create', data={
+        'title': 'title',
+        'content': 'some example content'
+    })
+    assert response.status_code == 403
+
+def test_get_notebook():
+    try:
+        evernote.create_notebook("bookmarks", config.dev_token)
+    except evernote.EDAMUserException: # notebook already existed
+        pass
+    notebook = evernote.get_notebook("bookmarks", config.dev_token)
+    assert notebook.name == "bookmarks"
+
+def test_get_notebook_err():
+    try:
+        evernote.get_notebook("this_does_not_exist", config.dev_token)
+    except evernote.NoteNotFoundError:
+        pass
+    else:
+        assert False
 
 def test_create_notebook():
     # Deleting a Notebook is impossible with the API, so I cannot handle the case in which
