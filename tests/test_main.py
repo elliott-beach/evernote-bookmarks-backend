@@ -3,10 +3,10 @@ import os
 from os import path
 import sys
 
+# add backend directory to path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-import _evernote as evernote
-import config
+from backend import config, _evernote as evernote
 
 # Run tests in Evernote sandbox, not production Evernote. This also us to use the dev_token.
 config.sandbox = True
