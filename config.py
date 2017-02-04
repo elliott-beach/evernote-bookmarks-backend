@@ -9,7 +9,7 @@ ALLOWED_ORIGIN = environment['origin']
 
 if environment['sandbox'] == "True":
     sandbox = True
-elif environ['sandbox'] == "False":
+elif environment['sandbox'] == "False":
     sandbox = False
 else:
    raise EnvironmentError
