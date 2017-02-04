@@ -30,11 +30,11 @@ def create_notebook(name, token):
     return uid
 
 def get_notebook(name, token):
-    name = name.lower() # EverNotebook names are not case sensitive.
     noteStore = get_client(token=token).get_note_store()
     notebooks = noteStore.listNotebooks()
     for nb in notebooks:
-        if nb.name == name:
+        # Notebook names are not case sensitive.
+        if nb.name.lower() == name.lower():
             return nb
     raise NoteBookNotFoundError
 
