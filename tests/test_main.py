@@ -1,7 +1,12 @@
 import requests
+import os
+from os import path
+import sys
+
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
 import _evernote as evernote
 import config
-import os
 
 # Run tests in Evernote sandbox, not production Evernote. This also us to use the dev_token.
 config.sandbox = True
