@@ -63,12 +63,14 @@ def create():
         return 'Access Denied', 403
 
     try:
+        # Storing UID in a session improves speed and reduces the number of API calls we have to make.
         notebook_uid = session['notebook_uid']
     except KeyError:
         try:
             notebook_uid = evernote.get_notebook('Bookmarks', token).guid
         except evernote.NoteBookNotFoundError:
             notebook_uid = evernote.create_notebook('Bookmarks', token)
+        session['notebook_uid'] = notebook_uid
 
     # TODO change to arrays
     title = request.form.get('title').encode('utf-8')
