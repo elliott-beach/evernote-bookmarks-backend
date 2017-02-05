@@ -46,7 +46,7 @@ def test_create_authorized():
 def test_get_notebook():
     try:
         evernote.create_notebook("bookmarks", config.dev_token)
-    except evernote.EDAMUserException: # notebook already existed
+    except evernote.EDAMSystemException: # notebook already existed
         pass
     notebook = evernote.get_notebook("bookmarks", config.dev_token)
     assert notebook.name == "bookmarks"
@@ -54,7 +54,7 @@ def test_get_notebook():
 def test_notebook_case():
     try:
         evernote.create_notebook("bookmarks", config.dev_token)
-    except evernote.EDAMUserException: # notebook already existed
+    except evernote.EDAMSystemException: # notebook already existed
         pass
     assert evernote.get_notebook("bookmarks", config.dev_token).guid == evernote.get_notebook("Bookmarks", config.dev_token).guid
 
@@ -71,9 +71,10 @@ def test_create_notebook():
     # The Notebook has already been created.
     try:
         evernote.create_notebook("bookmarks", config.dev_token)
-    except evernote.EDAMUserException as e:
-        # 10 is anticipated error code if note has already been created.
-        assert e.errorCode == 10
+    except evernote.EDAMSystemException as e:
+        # 19 is anticipated error code if note has already been created.
+        assert e.errorCode == 19
+
 
 def test_create_note_with_notebook():
     # Danger -- could result in Exception if we generate a name that was generated before.
@@ -81,3 +82,8 @@ def test_create_note_with_notebook():
     uid = evernote.create_notebook(notebook_name, token)
     note = evernote.create_note_with_notebook("New Note!", "Test", uid, token)
     assert note
+
+def test_API_expunge_notebook():
+    uid = evernote.get_notebook("bookmarks", token).guid
+    evernote.get_client(token).get_note_store().expungeNotebook(uid)
+

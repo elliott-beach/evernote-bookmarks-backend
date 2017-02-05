@@ -1,6 +1,6 @@
 from evernote.api.client import EvernoteClient
 import evernote.edam.type.ttypes as Types
-from evernote.edam.error.ttypes import EDAMUserException
+from evernote.edam.error.ttypes import EDAMUserException, EDAMSystemException
 
 import config
 
