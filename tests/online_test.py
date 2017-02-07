@@ -1,4 +1,5 @@
 import requests
+import pytest
 import os
 from os import path
 import sys
@@ -27,6 +28,7 @@ class TestServer(object):
         response = requests.get(HOST)
         assert response.status_code == 200
 
+
     def test_create_access(self):
         response = requests.post(HOST+'/create', data={
     		'title': 'title',
@@ -46,7 +48,7 @@ class TestServer(object):
 
 def check_create_notebook():
     try:
-        evernote.create_notebook("bookmarks", config.dev_token)
+        return evernote.create_notebook("bookmarks", config.dev_token)
     except evernote.EDAMSystemException as e:
         # 19 code occurs when rate limit is breached, which can sometimes happen on sandbox for some reason?
         assert e.errorCode == 19
@@ -59,33 +61,29 @@ def check_create_notebook():
 class TestAPIClient(object):
 
     def setup_class(self):
-        check_create_notebook()
+        self.uid = check_create_notebook()
+
 
     def teardown_class(self):
-        uid = evernote.get_notebook("bookmarks", token).guid
-        evernote.get_client(token).get_note_store().expungeNotebook(uid)
+        evernote.get_client(token).get_note_store().expungeNotebook(self.uid)
 
 
     def test_get_notebook(self):
-        notebook = evernote.get_notebook("bookmarks", config.dev_token)
+        notebook = evernote.get_notebook("bookmarks", token)
         assert notebook.name == "bookmarks"
 
+
     def test_notebook_case(self):
-        assert evernote.get_notebook("bookmarks", config.dev_token).guid == evernote.get_notebook("Bookmarks", config.dev_token).guid
+        assert self.uid == evernote.get_notebook("Bookmarks", token).guid
 
-    def test_get_notebook_err(self):
-        try:
-            evernote.get_notebook("this_does_not_exist", config.dev_token)
-        except evernote.NoteBookNotFoundError:
-            pass
-        else:
-            assert False
 
-    def test_create_note_with_notebook(self):
-        # Danger -- could result in Exception if we generate a name that was generated before.
-        notebook_name = randomword(30)
-        uid = evernote.create_notebook(notebook_name, token)
-        note = evernote.create_note_with_notebook("New Note!", "Test", uid, token)
+    def test_get_notebook_nonexistant(self):
+        with pytest.raises(evernote.NoteBookNotFoundError):
+            evernote.get_notebook("this_does_not_exist", token)
+
+
+    def test_create_note(self):
+        note = evernote.create_note_with_notebook("New Note!", "Test", self.uid, token)
         assert note
 
 
