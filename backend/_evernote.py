@@ -2,14 +2,8 @@ from evernote.api.client import EvernoteClient
 import evernote.edam.type.ttypes as Types
 from evernote.edam.error.ttypes import EDAMUserException, EDAMSystemException
 
+from evernoteExceptions import NoteBookNotFoundError
 import config
-
-# TODO move exceptions to separate file
-class EvernoteError(Exception):
-    pass
-
-class NoteBookNotFoundError(EvernoteError):
-    pass
 
 def get_client(token=None):
     if token:
