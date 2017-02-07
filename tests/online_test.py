@@ -4,33 +4,27 @@ import os
 from os import path
 import sys
 
-# add backend directory to path
+# Add backend directory to path.
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from backend import config, _evernote as evernote
 config.sandbox=True
 token = config.dev_token
 
-# @TODO look at how Nithin Murali did his tests and write ours in the same way.
-# TODO move to environment
-port = int(os.environ.get('PORT', 5000))
-HOST = 'http://localhost:%d' % port
-
-# from http://stackoverflow.com/questions/2030053/random-strings-in-python
-import random, string
-def randomword(length):
-   return ''.join(random.choice(string.lowercase) for i in range(length))
-
-
+# This class relies on a Python server running in the background for the app.
 class TestServer(object):
 
+    def setup_class(self):
+        port = int(os.environ.get('PORT', 5000))
+        self.HOST = 'http://localhost:%d' % port
+
     def test_home(self):
-        response = requests.get(HOST)
+        response = requests.get(self.HOST)
         assert response.status_code == 200
 
 
     def test_create_access(self):
-        response = requests.post(HOST+'/create', data={
+        response = requests.post(self.HOST+'/create', data={
     		'title': 'title',
     		'content': 'some example content'
     	})
