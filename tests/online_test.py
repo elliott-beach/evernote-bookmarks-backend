@@ -11,7 +11,7 @@ from backend import config, _evernote as evernote
 config.sandbox=True
 token = config.dev_token
 
-# This class relies on a Python server running in the background for the app.
+# This class relies on a Python server ( `python app.py &` ) running in the background.
 class TestServer(object):
 
     def setup_class(self):
@@ -30,54 +30,39 @@ class TestServer(object):
     	})
         assert response.status_code == 403
 
-    # @TODO
-    # def test_create_authorized():
-    #     """ Test functionality of create method when we are logged in"""
-    #     session = requests.session()
-    #     response = requests.post(HOST+'/create', data={
-    #         'title': 'title',
-    #         'content': 'some example content'
-    #     })
-    #     assert response.status_code == 403
-
-def check_create_notebook():
-    try:
-        return evernote.create_notebook("bookmarks", config.dev_token)
-    except evernote.EDAMSystemException as e:
-        # 19 code occurs when rate limit is breached, which can sometimes happen on sandbox for some reason?
-        assert e.errorCode == 19
-        raise
-    except evernote.EDAMUserException as e:
-        # 10 is anticipated error code if note has already been created
-        assert e.errorCode == 10
-
 
 class TestAPIClient(object):
 
     def setup_class(self):
-        self.uid = check_create_notebook()
+        self.client = evernote.NoteClient(token)
+
+        # This line is flaky and sometimes raises errors.
+        # Possible error codes:
+        # Errno. 19 occurs when rate limit is breached, which can sometimes happen even on sandbox mode for some reason.
+        # Errno. 10 occurs if note with same name has already been created.
+        self.uid = self.client.create_notebook("bookmarks")
 
 
     def teardown_class(self):
-        evernote.get_client(token).get_note_store().expungeNotebook(self.uid)
+        self.client.noteStore.expungeNotebook(self.uid)
 
 
     def test_get_notebook(self):
-        notebook = evernote.get_notebook("bookmarks", token)
+        notebook = self.client.get_notebook("bookmarks")
         assert notebook.name == "bookmarks"
 
 
     def test_notebook_case(self):
-        assert self.uid == evernote.get_notebook("Bookmarks", token).guid
+        assert self.uid == self.client.get_notebook("Bookmarks").guid
 
 
     def test_get_notebook_nonexistant(self):
         with pytest.raises(evernote.NoteBookNotFoundError):
-            evernote.get_notebook("this_does_not_exist", token)
+            self.client.get_notebook("this_does_not_exist")
 
 
     def test_create_note(self):
-        note = evernote.create_note_with_notebook("New Note!", "Test", self.uid, token)
-        assert note
+        uid = self.client.create_note("New Note!", "Test", notebook_uid=self.uid)  
+        assert uid
 
 

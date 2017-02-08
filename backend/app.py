@@ -7,7 +7,7 @@ import _evernote as evernote
 
 app = Flask(__name__)
 
-# encrypt our sessions with the secret
+# encrypt our sessions with the secret.
 app.secret_key = config.secret_key
 
 def get_hostname(request):
@@ -30,7 +30,7 @@ def bookmarks():
 @app.route('/auth')
 def auth():
     callbackUrl = get_hostname(request) + '/auth_callback'
-    client = evernote.get_client()
+    client = evernote.auth_client()
     request_token = client.get_request_token(callbackUrl)
     # Save the request token information for later
     session['oauth_token'] = request_token['oauth_token']
@@ -41,7 +41,7 @@ def auth():
 @app.route('/auth_callback')
 def callback():
     try:
-        client = evernote.get_client()
+        client = evernote.auth_client()
         access_token = client.get_access_token(
             session['oauth_token'],
             session['oauth_token_secret'],
@@ -62,20 +62,22 @@ def create():
     if not token:
         return 'Access Denied', 403
 
+    note_client = evernote.NoteClient(token)
+
     try:
         # Storing UID in a session improves speed and reduces the number of API calls we have to make.
         notebook_uid = session['notebook_uid']
     except KeyError:
         try:
-            notebook_uid = evernote.get_notebook('Bookmarks', token).guid
+            notebook_uid = note_client.get_notebook('Bookmarks').guid
         except evernote.NoteBookNotFoundError:
-            notebook_uid = evernote.create_notebook('Bookmarks', token)
+            notebook_uid = note_client.create_notebook('Bookmarks')
         session['notebook_uid'] = notebook_uid
 
     # TODO change to arrays
     title = request.form.get('title').encode('utf-8')
     content = request.form.get('content').encode('utf-8')
-    note = evernote.create_note_with_notebook(title, content, notebook_uid, token)
+    note = note_client.create_note(title, content, notebook_uid=notebook_uid)
     return str(note)
 
 if __name__ == "__main__":
