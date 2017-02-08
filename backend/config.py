@@ -12,4 +12,4 @@ if environment['sandbox'] == "True":
 elif environment['sandbox'] == "False":
     sandbox = False
 else:
-   raise EnvironmentError
+   raise EnvironmentError("Sandbox must be either True or False")
