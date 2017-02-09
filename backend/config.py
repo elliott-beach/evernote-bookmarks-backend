@@ -13,3 +13,5 @@ elif environment['sandbox'] == "False":
     sandbox = False
 else:
    raise EnvironmentError("Sandbox must be either True or False")
+
+port = int(environment.get('PORT', 5000))

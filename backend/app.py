@@ -81,6 +81,4 @@ def create():
     return str(note)
 
 if __name__ == "__main__":
-    # @TODO move port to config
-	port = int(os.environ.get('PORT', 5000))
-	app.run(port=port)
+	app.run(port=config.port)
