@@ -1,4 +1,5 @@
 import requests
+import datetime
 import pytest
 import os
 from os import path
@@ -10,6 +11,15 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from backend import config, _evernote as evernote
 config.sandbox=True
 token = config.dev_token
+
+MAX_API_CALLS_ALLOWED = 100
+
+# some tests are really slow.
+# http://doc.pytest.org/en/latest/example/simple.html#control-skipping-of-tests-according-to-command-line-option
+slow = pytest.mark.skipif(
+    not pytest.config.getoption("--runslow"),
+    reason="need --runslow option to run"
+)
 
 # This class relies on a Python server ( `python app.py &` ) running in the background.
 class TestServer(object):
@@ -30,8 +40,12 @@ class TestServer(object):
     	})
         assert response.status_code == 403
 
+def raiseRateLimitException(*args, **kwargs):
+    """ dummy function to mock a real rateLimitException """
+    raise evernote.EDAMSystemException(errorCode=19, rateLimitDuration=10)
 
 class TestAPIClient(object):
+
 
     def setup_class(self):
         self.client = evernote.NoteClient(token)
@@ -45,6 +59,7 @@ class TestAPIClient(object):
 
     def teardown_class(self):
         self.client.noteStore.expungeNotebook(self.uid)
+
 
 
     def test_get_notebook(self):
@@ -65,7 +80,21 @@ class TestAPIClient(object):
         uid = self.client.create_note("New Note!", "Test", notebook_uid=self.uid)  
         assert uid
 
+    @slow
+    def test_api_limit(self):
+        # It appears that teh duplicateNotebookLimiter exception is more strict than other API exceptions.
+        with pytest.raises(evernote.EDAMSystemException):
+            for i in range(MAX_API_CALLS_ALLOWED):
+                self.client.create_note('spam', '')
+
+    @slow
     def test_create_bookmarks(self):
-        pass
+        fakeBookmark = {
+            "title": "example",
+            "content": "http://example.com"
+        }
+        fakeBookmarks = [ fakeBookmark ] * MAX_API_CALLS_ALLOWED
+        # we are testing that NO error occurs
+        self.client.send_bookmarks(fakeBookmarks, self.uid)
 
 
