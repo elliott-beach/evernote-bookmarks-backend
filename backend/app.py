@@ -38,6 +38,7 @@ def auth():
     # Redirect the user to the Evernote authorization URL
     return redirect(client.get_authorize_url(request_token))
 
+
 @app.route('/auth_callback')
 def callback():
     try:
@@ -55,15 +56,14 @@ def callback():
 
 ### <\Authentication> ###
 
+
 @app.route('/create', methods=['POST'])
 @cross_origin(origin=config.ALLOWED_ORIGIN)
 def create():
     token = session.get('access_token')
     if not token:
         return 'Access Denied', 403
-
     note_client = evernote.NoteClient(token)
-
     try:
         # Storing UID in a session improves speed and reduces the number of API calls we have to make.
         notebook_uid = session['notebook_uid']
@@ -73,12 +73,9 @@ def create():
         except evernote.NoteBookNotFoundError:
             notebook_uid = note_client.create_notebook('Bookmarks')
         session['notebook_uid'] = notebook_uid
-
-    # TODO change to arrays
-    title = request.form.get('title').encode('utf-8')
-    content = request.form.get('content').encode('utf-8')
-    note = note_client.create_note(title, content, notebook_uid=notebook_uid)
-    return str(note)
+    bookmarks = request.json
+    note_client.send_bookmarks(bookmarks, notebook_uid)
+    return 'OK'
 
 if __name__ == "__main__":
 	app.run(port=config.port)

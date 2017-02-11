@@ -65,4 +65,7 @@ class TestAPIClient(object):
         uid = self.client.create_note("New Note!", "Test", notebook_uid=self.uid)  
         assert uid
 
+    def test_create_bookmarks(self):
+        pass
+
 

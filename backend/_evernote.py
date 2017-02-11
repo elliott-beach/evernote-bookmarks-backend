@@ -51,4 +51,12 @@ class NoteClient(object):
         except EDAMUserException as e:
             raise
 
+    def send_bookmarks(self, bookmarks, notebook_uid):
+        """ Send array of bookmarks to Evernote, handling rateLimitExceptions """
+         # @TODO handle case when Evernote API Rate Limit goes over
+        for b in bookmarks:
+            title = b['title']
+            content = b['content']
+            self.note_client.create_note(title, content, notebook_uid=notebook_uid)
+
 
